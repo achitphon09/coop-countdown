@@ -9,6 +9,7 @@
   let minutes = $state(0);
   let seconds = $state(0);
   let workDays = $state(0);
+  let trainedDays = $state(0); // เพิ่มตัวแปรสำหรับนับวันที่ฝึกไปแล้ว
   let progress = $state(0);
   let isFinished = $state(false);
   let isMounted = $state(false);
@@ -24,12 +25,16 @@
       isFinished = true;
       progress = 100;
       days = 0; hours = 0; minutes = 0; seconds = 0; workDays = 0;
+      trainedDays = Math.floor(totalDuration / (1000 * 60 * 60 * 24));
     } else {
       days = Math.floor(distance / (1000 * 60 * 60 * 24));
       hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
       minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
       seconds = Math.floor((distance % (1000 * 60)) / 1000);
       
+      // คำนวณจำนวนวันที่ผ่านไปแล้ว (ฝึกไปแล้วกี่วัน)
+      trainedDays = Math.max(0, Math.floor(elapsed / (1000 * 60 * 60 * 24)));
+
       progress = Math.max(0, Math.min(100, (elapsed / totalDuration) * 100));
 
       // คำนวณวันทำงานจริง (หักวันอาทิตย์ออก)
@@ -55,20 +60,33 @@
   });
 </script>
 
-<div class="relative min-h-screen flex flex-col items-center justify-center p-4 font-sans bg-black overflow-hidden">
+<div class="relative min-h-screen flex flex-col items-center justify-center p-4 bg-black overflow-hidden">
 
   <!-- Glassmorphism Card -->
   <div class="relative z-10 bg-white/10 backdrop-blur-xl rounded-3xl shadow-2xl p-8 max-w-lg w-full text-center border border-white/20">
-    <h1 class="text-3xl font-extrabold text-white mb-2 tracking-wide drop-shadow-md">Countdown สหกิจศึกษา</h1>
+    <h1 class="text-lg sm:text-xl font-extrabold text-white mb-2 tracking-wide drop-shadow-md">Countdown สหกิจศึกษา</h1>
     <p class="text-white/70 mb-8 font-medium">บริษัทดลอัสจำกัด</p>
     
     {#if !isMounted}
       <div class="py-8 text-white/50 animate-pulse font-medium">กำลังเตรียมข้อมูล...</div>
     {:else if isFinished}
       <div class="text-3xl font-bold text-green-400 animate-bounce py-8 drop-shadow-md">
-        อิสรภาพ 🎉
+        อิสรภาพ
       </div>
     {:else}
+      
+      <!-- ส่วนแสดงจำนวนวันที่ฝึกไปแล้ว -->
+      <div class="mb-6 bg-gradient-to-r from-red-950/80 via-rose-900/70 to-red-900/80 p-5 rounded-3xl shadow-[0_10px_30px_rgba(0,0,0,0.5),inset_0_1px_3px_rgba(255,255,255,0.15),inset_0_-2px_6px_rgba(0,0,0,0.4)] border border-red-500/20 flex items-center justify-between">
+  <div class="text-left">
+    <div class="text-xs text-red-300/80 font-medium tracking-wider">ระยะเวลาสะสม</div>
+    <div class="text-sm text-white/90 font-normal">ฝึกงานมาแล้วทั้งหมด</div>
+  </div>
+  <div class="text-right flex items-baseline">
+    <span class="text-5xl sm:text-8xl font-black text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]">{trainedDays}</span>
+    <span class="text-sm text-red-200/80 ml-1.5 font-medium">วัน</span>
+  </div>
+</div>
+
       <!-- กล่องนับเวลาหลัก (รวมวันหยุด) -->
       <div class="grid grid-cols-4 gap-3 sm:gap-4">
         <div class="relative group bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl border border-white/10 border-t-white/30 border-l-white/30 py-4 px-2 rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.5)] hover:-translate-y-1 transition-all duration-300 overflow-hidden">
@@ -130,26 +148,17 @@
         </div>
         
         <!-- Progress Bar แนวหลอดแก้วไซเบอร์พังก์สุดล้ำ -->
-<div class="relative w-full bg-black/50 backdrop-blur-xl rounded-full h-12 overflow-hidden border border-white/25 shadow-[inset_0_4px_16px_rgba(0,0,0,0.9),0_8px_32px_rgba(0,0,0,0.4)]">
-  <!-- ตัวของเหลวเรืองแสงด้านใน -->
-  <div 
-    class="relative h-full rounded-full bg-gradient-to-r from-red-500 via-rose-500 to-amber-500 transition-all duration-1000 ease-linear shadow-[0_0_25px_rgba(167,139,250,0.8),inset_0_2px_4px_rgba(255,255,255,0.6)] overflow-hidden" 
-    style="width: {progress}%"
-  >
-    <!-- ลูกเล่นที่ 1: แสงแฟลชวิ่งผ่าน (Shimmer) -->
-    <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/50 to-transparent -translate-x-full animate-[shimmer_2.5s_infinite]"></div>
-
-    <!-- ลูกเล่นที่ 2: ลายเส้นแสงระลอกคลื่นวิ่งทับ (Pulse Wave) -->
-    <div class="absolute inset-0 bg-[linear-gradient(90deg,transparent,rgba(255,255,255,0.3),transparent)] -translate-x-full animate-[wave_3s_ease-in-out_infinite]"></div>
-
-    <!-- ลูกเล่นที่ 3: ไฮไลต์แสงสะท้อนผิวกระจกด้านบน -->
-    <div class="absolute inset-x-0 top-0 h-[45%] bg-gradient-to-b from-white/70 via-white/25 to-transparent rounded-t-2xl"></div>
-    
-    <!-- เงาสะท้อนขอบล่างของของเหลวให้ดูนูน -->
-    <div class="absolute inset-x-0 bottom-0 h-[20%] bg-gradient-to-t from-black/20 to-transparent"></div>
-  </div>
-
-</div>
+        <div class="relative w-full bg-black/50 backdrop-blur-xl rounded-full h-12 overflow-hidden border border-white/25 shadow-[inset_0_4px_16px_rgba(0,0,0,0.9),0_8px_32px_rgba(0,0,0,0.4)]">
+          <div 
+            class="relative h-full rounded-full bg-gradient-to-r from-red-500 via-rose-500 to-amber-500 transition-all duration-1000 ease-linear shadow-[0_0_25px_rgba(167,139,250,0.8),inset_0_2px_4px_rgba(255,255,255,0.6)] overflow-hidden" 
+            style="width: {progress}%"
+          >
+            <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/50 to-transparent -translate-x-full animate-[shimmer_2.5s_infinite]"></div>
+            <div class="absolute inset-0 bg-[linear-gradient(90deg,transparent,rgba(255,255,255,0.3),transparent)] -translate-x-full animate-[wave_3s_ease-in-out_infinite]"></div>
+            <div class="absolute inset-x-0 top-0 h-[45%] bg-gradient-to-b from-white/70 via-white/25 to-transparent rounded-t-2xl"></div>
+            <div class="absolute inset-x-0 bottom-0 h-[20%] bg-gradient-to-t from-black/20 to-transparent"></div>
+          </div>
+        </div>
       </div>
       
       <div class="mt-6 inline-flex items-center justify-center space-x-2 bg-white/5 border border-white/10 px-4 py-2 rounded-full text-xs text-white/70 font-medium backdrop-blur-sm">

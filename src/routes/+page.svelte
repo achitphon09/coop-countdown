@@ -60,7 +60,7 @@
   <!-- Glassmorphism Card -->
   <div class="relative z-10 bg-white/10 backdrop-blur-xl rounded-3xl shadow-2xl p-8 max-w-lg w-full text-center border border-white/20">
     <h1 class="text-3xl font-extrabold text-white mb-2 tracking-wide drop-shadow-md">Countdown สหกิจศึกษา</h1>
-    <p class="text-white/70 mb-8 font-medium">Donaus</p>
+    <p class="text-white/70 mb-8 font-medium">บริษัทดลอัสจำกัด</p>
     
     {#if !isMounted}
       <div class="py-8 text-white/50 animate-pulse font-medium">กำลังเตรียมข้อมูล...</div>

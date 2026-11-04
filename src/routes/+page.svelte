@@ -152,60 +152,72 @@
     {:else}
       
       <!-- ส่วนแสดงจำนวนวันที่ฝึกไปแล้ว -->
-      <div class="mb-6 bg-gradient-to-r from-red-950/80 via-rose-900/70 to-red-900/80 p-5 rounded-3xl shadow-[0_10px_30px_rgba(0,0,0,0.5),inset_0_1px_3px_rgba(255,255,255,0.15),inset_0_-2px_6px_rgba(0,0,0,0.4)] border border-red-500/20 flex items-center justify-between">
-  <div class="text-left">
-    <div class="text-xs text-red-300/80 font-medium tracking-wider">ระยะเวลาสะสม</div>
-    <div class="text-sm text-white/90 font-normal">ฝึกงานมาแล้วทั้งหมด</div>
+      <div class="mb-3 bg-zinc-800/90 backdrop-blur-xl px-4 py-3 rounded-2xl shadow-[0_10px_25px_rgba(0,0,0,0.5),inset_0_2px_4px_rgba(255,255,255,0.2),inset_0_-3px_6px_rgba(0,0,0,0.5)] border border-white/10 flex items-center justify-between text-left">
+  <div>
+    <div class="text-xs text-zinc-400 font-semibold tracking-wider uppercase">ระยะเวลาสะสม</div>
+    <div class="text-md text-white/90 font-medium mt-0.5">ฝึกงานมาแล้วทั้งหมด</div>
   </div>
-  <div class="text-right flex items-baseline">
-    <span class="text-5xl sm:text-8xl font-black text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]">{trainedDays}</span>
-    <span class="text-sm text-red-200/80 ml-1.5 font-medium">วัน</span>
+  
+  <div class="flex items-baseline bg-zinc-900/90 px-3.5 py-1.5 rounded-xl border border-white/10 shadow-[0_4px_10px_rgba(0,0,0,0.4),inset_0_1px_2px_rgba(255,255,255,0.15),inset_0_-2px_4px_rgba(0,0,0,0.6)]">
+    <span class="text-5xl sm:text-6xl font-black text-white drop-shadow-sm tracking-tight">{trainedDays}</span>
+    <span class="text-xs text-zinc-400 ml-1.5 font-bold">วัน</span>
   </div>
 </div>
 
 <!-- ส่วนนับถอยหลังเลิกงานวันนี้ พร้อมแบนเนอร์บอกช่วงเวลา -->
-     <div class="mb-6 bg-zinc-800/80 backdrop-blur-xl px-3.5 py-2.5 rounded-2xl shadow-[0_10px_25px_rgba(0,0,0,0.5),inset_0_2px_4px_rgba(255,255,255,0.2),inset_0_-3px_6px_rgba(0,0,0,0.5)] border border-white/10 text-left">
+     <div class="mb-5 bg-gradient-to-b from-zinc-800/90 to-zinc-900/90 backdrop-blur-xl px-4 py-3 rounded-2xl shadow-[0_12px_30px_rgba(0,0,0,0.6),inset_0_2px_4px_rgba(255,255,255,0.25),inset_0_-4px_8px_rgba(0,0,0,0.6)] border border-white/15 text-left">
         
-        <!-- แบนเนอร์บอกช่วงเวลา (สไตล์ Claymorphism นูนเบาๆ) -->
-        <div class="mb-2 px-2.5 py-1.5 rounded-xl border border-white/15 text-[11px] font-bold text-center tracking-wide shadow-[0_4px_10px_rgba(0,0,0,0.3),inset_0_1px_2px_rgba(255,255,255,0.2)] {workStatusBadgeClass}">
-          {workStatusText}
-        </div>
+  <!-- แบนเนอร์บอกช่วงเวลา (Claymorphism Badge นูนเด่น) -->
+  <div class="mb-2.5 px-3 py-1.5 rounded-xl border border-white/20 text-xs font-bold text-center tracking-wide shadow-[0_4px_12px_rgba(0,0,0,0.4),inset_0_1px_3px_rgba(255,255,255,0.3)] {workStatusBadgeClass}">
+    {workStatusText}
+  </div>
 
-        <div class="flex items-center justify-between mb-1.5 px-0.5">
-          <div class="text-[10px] text-white font-medium tracking-wider">นับถอยหลังเลิกงาน</div>
-          <div class="text-[10px] text-white font-medium">สำเร็จ {todayWorkProgress.toFixed(1)}%</div>
-        </div>
-        
-        {#if isBeforeWork}
-          <div class="text-xs font-bold text-amber-300 py-1.5 text-center">เตรียมตัวเริ่มงาน 08:00 น.</div>
-        {:else if isAfterWork}
-          <div class="text-xs font-bold text-green-400 py-1.5 text-center">วันนี้เสร็จสิ้นภารกิจแล้ว!</div>
-        {:else}
-          <div class="grid grid-cols-3 gap-2 text-center py-0.5">
-            <div class="bg-zinc-900/90 rounded-xl py-1.5 px-1 border border-white/10 shadow-[0_4px_10px_rgba(0,0,0,0.4),inset_0_1px_2px_rgba(255,255,255,0.15),inset_0_-2px_4px_rgba(0,0,0,0.6)]">
-              <span class="text-base font-extrabold text-white drop-shadow-sm">{todayHoursLeft}</span>
-              <span class="text-[9px] text-white/60 ml-0.5">ชม.</span>
-            </div>
-            <div class="bg-zinc-900/90 rounded-xl py-1.5 px-1 border border-white/10 shadow-[0_4px_10px_rgba(0,0,0,0.4),inset_0_1px_2px_rgba(255,255,255,0.15),inset_0_-2px_4px_rgba(0,0,0,0.6)]">
-              <span class="text-base font-extrabold text-white drop-shadow-sm">{todayMinutesLeft}</span>
-              <span class="text-[9px] text-white/60 ml-0.5">นาที</span>
-            </div>
-            <div class="bg-zinc-900/90 rounded-xl py-1.5 px-1 border border-white/10 shadow-[0_4px_10px_rgba(0,0,0,0.4),inset_0_1px_2px_rgba(255,255,255,0.15),inset_0_-2px_4px_rgba(0,0,0,0.6)]">
-              <span class="text-base font-extrabold text-white drop-shadow-sm">{todaySecondsLeft}</span>
-              <span class="text-[9px] text-white/60 ml-0.5">วินาที</span>
-            </div>
-          </div>
-        {/if}
-        <!-- Progress Bar สำหรับงานวันนี้ -->
-        <div class="mt-2.5 relative w-full bg-zinc-950/80 rounded-full h-3.5 overflow-hidden border border-white/15 shadow-[inset_0_2px_6px_rgba(0,0,0,0.9),0_2px_5px_rgba(0,0,0,0.4)]">
-          <div 
-            class="relative h-full rounded-full bg-gradient-to-r from-red-600 via-rose-500 to-amber-500 transition-all duration-1000 ease-linear shadow-[inset_0_1px_2px_rgba(255,255,255,0.5)] overflow-hidden" 
-            style="width: {todayWorkProgress}%"
-          >
-            <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full animate-[shimmer_2.5s_infinite]"></div>
-          </div>
-        </div>
+  <!-- หัวข้อและเปอร์เซ็นต์ -->
+  <div class="flex items-center justify-between mb-1.5 px-0.5">
+    <div class="text-[11px] text-zinc-300 font-semibold tracking-wider flex items-center gap-1">
+      <span class="inline-block animate-spin-slow">⏳</span> นับถอยหลังเลิกงาน
+    </div>
+    <div class="text-[11px] text-amber-400 font-bold bg-black/40 px-2 py-0.5 rounded-full border border-white/10 shadow-inner">
+      {todayWorkProgress.toFixed(1)}%
+    </div>
+  </div>
+
+  <!-- Progress Bar สไตล์หลอดแก้ว Claymorphism -->
+  <div class="mb-3 relative w-full bg-zinc-950/90 rounded-full h-3 overflow-hidden border border-white/20 shadow-[inset_0_3px_8px_rgba(0,0,0,0.9),0_2px_4px_rgba(0,0,0,0.3)]">
+    <div 
+      class="relative h-full rounded-full bg-gradient-to-r from-red-500 via-rose-500 to-amber-400 transition-all duration-1000 ease-linear shadow-[inset_0_1px_2px_rgba(255,255,255,0.6)] overflow-hidden" 
+      style="width: {todayWorkProgress}%"
+    >
+      <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/40 to-transparent -translate-x-full animate-[shimmer_2.5s_infinite]"></div>
+    </div>
+  </div>
+  
+  {#if isBeforeWork}
+    <div class="text-xs font-bold text-amber-300 py-2 text-center bg-black/30 rounded-xl border border-white/10 shadow-inner">
+      เริ่มงาน 08:00 น. นะอย่าลืม
+    </div>
+  {:else if isAfterWork}
+    <div class="text-xs font-bold text-green-400 py-2 text-center bg-black/30 rounded-xl border border-white/10 shadow-inner">
+      วันนี้เสร็จงานแล้ว กลับบ้านดิรอไร
+    </div>
+  {:else}
+    <!-- กล่องตัวเลขชั่วโมง นาที วินาที แบบ Inset นูนลึก -->
+    <div class="grid grid-cols-3 gap-2 text-center">
+      <div class="bg-zinc-950/80 rounded-xl py-1.5 px-1 border border-white/10 shadow-[0_4px_10px_rgba(0,0,0,0.5),inset_0_2px_4px_rgba(0,0,0,0.8),inset_0_-1px_2px_rgba(255,255,255,0.1)]">
+        <span class="text-lg font-black text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]">{todayHoursLeft}</span>
+        <span class="text-[9px] text-zinc-400 ml-0.5 font-medium">ชม.</span>
       </div>
+      <div class="bg-zinc-950/80 rounded-xl py-1.5 px-1 border border-white/10 shadow-[0_4px_10px_rgba(0,0,0,0.5),inset_0_2px_4px_rgba(0,0,0,0.8),inset_0_-1px_2px_rgba(255,255,255,0.1)]">
+        <span class="text-lg font-black text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]">{todayMinutesLeft}</span>
+        <span class="text-[9px] text-zinc-400 ml-0.5 font-medium">นาที</span>
+      </div>
+      <div class="bg-zinc-950/80 rounded-xl py-1.5 px-1 border border-white/10 shadow-[0_4px_10px_rgba(0,0,0,0.5),inset_0_2px_4px_rgba(0,0,0,0.8),inset_0_-1px_2px_rgba(255,255,255,0.1)]">
+        <span class="text-lg font-black text-white drop-shadow-[0_2px_4px_rgba(0,0,0,0.5)]">{todaySecondsLeft}</span>
+        <span class="text-[9px] text-zinc-400 ml-0.5 font-medium">วินาที</span>
+      </div>
+    </div>
+  {/if}
+</div>
 
       <!-- กล่องนับเวลาหลัก (รวมวันหยุด) -->
       <div class="grid grid-cols-4 gap-3 sm:gap-4">
@@ -300,5 +312,22 @@
   @keyframes wave {
     0% { transform: translateX(-100%); }
     100% { transform: translateX(200%); }
+  }
+
+  @keyframes shimmer {
+    100% { transform: translateX(200%); }
+  }
+
+  /* อนิเมชั่นหมุนช้าๆ สำหรับนาฬิกาทราย */
+  @keyframes spinSlow {
+    0% { transform: rotate(0deg); }
+    25% { transform: rotate(15deg); }
+    75% { transform: rotate(-15deg); }
+    100% { transform: rotate(0deg); }
+  }
+
+  .animate-spin-slow {
+    display: inline-block;
+    animation: spinSlow 3s ease-in-out infinite;
   }
 </style>

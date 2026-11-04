@@ -9,8 +9,19 @@
   let minutes = $state(0);
   let seconds = $state(0);
   let workDays = $state(0);
-  let trainedDays = $state(0); // เพิ่มตัวแปรสำหรับนับวันที่ฝึกไปแล้ว
+  let trainedDays = $state(0);
   let progress = $state(0);
+
+  // ตัวแปรสำหรับสถานะและนับถอยหลังรายวัน
+  let todayWorkProgress = $state(0);
+  let todayHoursLeft = $state(0);
+  let todayMinutesLeft = $state(0);
+  let todaySecondsLeft = $state(0);
+  let workStatusText = $state('');
+  let workStatusBadgeClass = $state('');
+  let isAfterWork = $state(false);
+  let isBeforeWork = $state(false);
+
   let isFinished = $state(false);
   let isMounted = $state(false);
 
@@ -32,12 +43,9 @@
       minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
       seconds = Math.floor((distance % (1000 * 60)) / 1000);
       
-      // คำนวณจำนวนวันที่ผ่านไปแล้ว (ฝึกไปแล้วกี่วัน)
       trainedDays = Math.max(0, Math.floor(elapsed / (1000 * 60 * 60 * 24)));
-
       progress = Math.max(0, Math.min(100, (elapsed / totalDuration) * 100));
 
-      // คำนวณวันทำงานจริง (หักวันอาทิตย์ออก)
       let sundays = 0;
       let cur = new Date(now);
       cur.setHours(0, 0, 0, 0); 
@@ -45,10 +53,78 @@
       end.setHours(0, 0, 0, 0);
       
       while (cur < end) {
-        if (cur.getDay() === 0) sundays++; // 0 คือวันอาทิตย์
+        if (cur.getDay() === 0) sundays++;
         cur.setDate(cur.getDate() + 1);
       }
       workDays = days - sundays;
+
+      // --- จัดการช่วงเวลาทำงานรายวัน ---
+      const nowDateObj = new Date();
+      const currentHour = nowDateObj.getHours();
+      const currentMinute = nowDateObj.getMinutes();
+      const timeValue = currentHour * 60 + currentMinute; // แปลงเป็นนาทีเพื่อเทียบเช่วงเวลาได้ง่าย
+
+      const startWorkMin = 8 * 60;       // 08:00
+      const lunchStartMin = 12 * 60 + 1; // 12:01
+      const lunchEndMin = 13 * 60;       // 13:00
+      const afternoonStartMin = 13 * 60 + 1; // 13:01
+      const endWorkMin = 17 * 60 + 30;   // 17:30
+
+      const endWork = new Date();
+      endWork.setHours(17, 30, 0, 0);
+
+      if (timeValue < startWorkMin) {
+        isBeforeWork = true;
+        isAfterWork = false;
+        workStatusText = 'ยังไม่ถึงเวลาเริ่มงาน (08:00 น.)';
+        workStatusBadgeClass = 'bg-amber-500/20 text-amber-300 border-amber-500/30';
+      } else if (timeValue >= startWorkMin && timeValue <= 12 * 60) {
+        isBeforeWork = false;
+        isAfterWork = false;
+        workStatusText = 'ช่วงเวลาทำงาน (รอบเช้า)';
+        workStatusBadgeClass = 'bg-blue-500/20 text-blue-300 border-blue-500/30';
+      } else if (timeValue >= lunchStartMin && timeValue <= lunchEndMin) {
+        isBeforeWork = false;
+        isAfterWork = false;
+        workStatusText = 'ช่วงเวลาพักกินข้าว';
+        workStatusBadgeClass = 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30';
+      } else if (timeValue >= afternoonStartMin && timeValue <= endWorkMin) {
+        isBeforeWork = false;
+        isAfterWork = false;
+        workStatusText = 'ช่วงเวลาทำงาน (รอบบ่าย)';
+        workStatusBadgeClass = 'bg-indigo-500/20 text-indigo-300 border-indigo-500/30';
+      } else {
+        isBeforeWork = false;
+        isAfterWork = true;
+        workStatusText = 'ช่วงเวลาเลิกงานแล้ว พักผ่อนได้!';
+        workStatusBadgeClass = 'bg-green-500/20 text-green-300 border-green-500/30';
+      }
+
+      // คำนวณนับถอยหลังถึง 17:30 น.
+      const startWorkToday = new Date();
+      startWorkToday.setHours(8, 0, 0, 0);
+      const totalWorkMillis = endWork.getTime() - startWorkToday.getTime();
+
+      if (nowDateObj < startWorkToday) {
+        todayHoursLeft = 9;
+        todayMinutesLeft = 30;
+        todaySecondsLeft = 0;
+        todayWorkProgress = 0;
+      } else if (nowDateObj > endWork) {
+        todayHoursLeft = 0;
+        todayMinutesLeft = 0;
+        todaySecondsLeft = 0;
+        todayWorkProgress = 100;
+      } else {
+        const timeLeftToday = endWork.getTime() - nowDateObj.getTime();
+        const elapsedToday = nowDateObj.getTime() - startWorkToday.getTime();
+
+        todayHoursLeft = Math.floor((timeLeftToday % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        todayMinutesLeft = Math.floor((timeLeftToday % (1000 * 60 * 60)) / (1000 * 60));
+        todaySecondsLeft = Math.floor((timeLeftToday % (1000 * 60)) / 1000);
+
+        todayWorkProgress = Math.max(0, Math.min(100, (elapsedToday / totalWorkMillis) * 100));
+      }
     }
   }
 
@@ -87,8 +163,44 @@
   </div>
 </div>
 
+<!-- ส่วนนับถอยหลังเลิกงานวันนี้ พร้อมแบนเนอร์บอกช่วงเวลา -->
+     <div class="mb-6 bg-zinc-800/80 backdrop-blur-xl px-3.5 py-2.5 rounded-2xl shadow-[0_10px_25px_rgba(0,0,0,0.5),inset_0_2px_4px_rgba(255,255,255,0.2),inset_0_-3px_6px_rgba(0,0,0,0.5)] border border-white/10 text-left">
+        
+        <!-- แบนเนอร์บอกช่วงเวลา (สไตล์ Claymorphism นูนเบาๆ) -->
+        <div class="mb-2 px-2.5 py-1.5 rounded-xl border border-white/15 text-[11px] font-bold text-center tracking-wide shadow-[0_4px_10px_rgba(0,0,0,0.3),inset_0_1px_2px_rgba(255,255,255,0.2)] {workStatusBadgeClass}">
+          {workStatusText}
+        </div>
+
+        <div class="flex items-center justify-between mb-1.5 px-0.5">
+          <div class="text-[10px] text-white font-medium tracking-wider">นับถอยหลังเลิกงาน</div>
+          <div class="text-[10px] text-white font-medium">สำเร็จ {todayWorkProgress.toFixed(1)}%</div>
+        </div>
+        
+        {#if isBeforeWork}
+          <div class="text-xs font-bold text-amber-300 py-1.5 text-center">เตรียมตัวเริ่มงาน 08:00 น.</div>
+        {:else if isAfterWork}
+          <div class="text-xs font-bold text-green-400 py-1.5 text-center">วันนี้เสร็จสิ้นภารกิจแล้ว!</div>
+        {:else}
+          <div class="grid grid-cols-3 gap-2 text-center py-0.5">
+            <div class="bg-zinc-900/90 rounded-xl py-1.5 px-1 border border-white/10 shadow-[0_4px_10px_rgba(0,0,0,0.4),inset_0_1px_2px_rgba(255,255,255,0.15),inset_0_-2px_4px_rgba(0,0,0,0.6)]">
+              <span class="text-base font-extrabold text-white drop-shadow-sm">{todayHoursLeft}</span>
+              <span class="text-[9px] text-white/60 ml-0.5">ชม.</span>
+            </div>
+            <div class="bg-zinc-900/90 rounded-xl py-1.5 px-1 border border-white/10 shadow-[0_4px_10px_rgba(0,0,0,0.4),inset_0_1px_2px_rgba(255,255,255,0.15),inset_0_-2px_4px_rgba(0,0,0,0.6)]">
+              <span class="text-base font-extrabold text-white drop-shadow-sm">{todayMinutesLeft}</span>
+              <span class="text-[9px] text-white/60 ml-0.5">นาที</span>
+            </div>
+            <div class="bg-zinc-900/90 rounded-xl py-1.5 px-1 border border-white/10 shadow-[0_4px_10px_rgba(0,0,0,0.4),inset_0_1px_2px_rgba(255,255,255,0.15),inset_0_-2px_4px_rgba(0,0,0,0.6)]">
+              <span class="text-base font-extrabold text-white drop-shadow-sm">{todaySecondsLeft}</span>
+              <span class="text-[9px] text-white/60 ml-0.5">วินาที</span>
+            </div>
+          </div>
+        {/if}
+      </div>
+
       <!-- กล่องนับเวลาหลัก (รวมวันหยุด) -->
       <div class="grid grid-cols-4 gap-3 sm:gap-4">
+      
         <div class="relative group bg-gradient-to-br from-white/10 to-white/5 backdrop-blur-xl border border-white/10 border-t-white/30 border-l-white/30 py-4 px-2 rounded-2xl shadow-[0_8px_32px_rgba(0,0,0,0.5)] hover:-translate-y-1 transition-all duration-300 overflow-hidden">
           <div class="absolute inset-0 bg-gradient-to-br from-white/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
           <div class="relative z-10 text-3xl sm:text-4xl font-extrabold text-transparent bg-clip-text bg-gradient-to-b from-white to-white/40 drop-shadow-lg">{days}</div>
@@ -139,6 +251,8 @@
           </div>
         </div>
       </div>
+
+      
 
       <!-- Progress Bar  -->
       <div class="mt-8 text-left">

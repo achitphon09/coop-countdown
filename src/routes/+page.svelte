@@ -196,6 +196,15 @@
             </div>
           </div>
         {/if}
+        <!-- Progress Bar สำหรับงานวันนี้ -->
+        <div class="mt-2.5 relative w-full bg-zinc-950/80 rounded-full h-3.5 overflow-hidden border border-white/15 shadow-[inset_0_2px_6px_rgba(0,0,0,0.9),0_2px_5px_rgba(0,0,0,0.4)]">
+          <div 
+            class="relative h-full rounded-full bg-gradient-to-r from-red-600 via-rose-500 to-amber-500 transition-all duration-1000 ease-linear shadow-[inset_0_1px_2px_rgba(255,255,255,0.5)] overflow-hidden" 
+            style="width: {todayWorkProgress}%"
+          >
+            <div class="absolute inset-0 bg-gradient-to-r from-transparent via-white/30 to-transparent -translate-x-full animate-[shimmer_2.5s_infinite]"></div>
+          </div>
+        </div>
       </div>
 
       <!-- กล่องนับเวลาหลัก (รวมวันหยุด) -->
@@ -234,7 +243,7 @@
         
         <div class="grid grid-cols-4 gap-2 sm:gap-3">
           <div class="bg-white/5 backdrop-blur-md border border-white/10 py-3 px-1 rounded-xl text-center shadow-inner">
-            <div class="text-xl sm:text-2xl font-bold text-lime-300 drop-shadow-sm">{workDays}</div>
+            <div class="text-xl sm:text-2xl font-bold text-green-300 drop-shadow-sm">{workDays}</div>
             <div class="text-[10px] text-white/50 mt-1 font-medium tracking-wider">วันทำงาน</div>
           </div>
           <div class="bg-white/5 backdrop-blur-md border border-white/10 py-3 px-1 rounded-xl text-center shadow-inner">

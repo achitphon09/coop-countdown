@@ -238,7 +238,7 @@
       <!-- วันทำงานจริง (ไม่รวมวันอาทิตย์) -->
       <div class="mt-6 pt-5 border-t border-white/10 w-full text-left">
         <div class="flex items-center space-x-2 mb-3 px-1">
-          <span class="text-xs text-white/70 font-semibold tracking-wider">วันทำงานจริง (หยุดเฉพาะวันอาทิตย์)</span>
+          <span class="text-xs text-white/70 font-semibold tracking-wider">วันทำงานจริง (หยุดทุกวันอาทิตย์)</span>
         </div>
         
         <div class="grid grid-cols-4 gap-2 sm:gap-3">

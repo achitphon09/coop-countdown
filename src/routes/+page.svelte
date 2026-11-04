@@ -58,45 +58,47 @@
       }
       workDays = days - sundays;
 
-      // --- จัดการช่วงเวลาทำงานรายวัน ---
+      // --- จัดการช่วงเวลาทำงานรายวันแบบละเอียดระดับวินาที ---
       const nowDateObj = new Date();
       const currentHour = nowDateObj.getHours();
       const currentMinute = nowDateObj.getMinutes();
-      const timeValue = currentHour * 60 + currentMinute; // แปลงเป็นนาทีเพื่อเทียบเช่วงเวลาได้ง่าย
+      const currentSecond = nowDateObj.getSeconds();
+      
+      // แปลงเวลาปัจจุบันเป็นวินาทีรวมตั้งแต่เที่ยงคืน เพื่อเทียบช่วงเวลาได้แบบแม่นยำระดับวินาที
+      const totalSeconds = currentHour * 3600 + currentMinute * 60 + currentSecond;
 
-      const startWorkMin = 8 * 60;       // 08:00
-      const lunchStartMin = 12 * 60 + 1; // 12:01
-      const lunchEndMin = 13 * 60;       // 13:00
-      const afternoonStartMin = 13 * 60 + 1; // 13:01
-      const endWorkMin = 17 * 60 + 30;   // 17:30
+      const time8_29_59 = 8 * 3600 + 29 * 60 + 59;   // 08:29:59
+      const time11_59_59 = 11 * 3600 + 59 * 60 + 59; // 11:59:59
+      const time12_59_59 = 12 * 3600 + 59 * 60 + 59; // 12:59:59
+      const time17_29_59 = 17 * 3600 + 29 * 60 + 59; // 17:29:59
 
       const endWork = new Date();
       endWork.setHours(17, 30, 0, 0);
 
-      if (timeValue < startWorkMin) {
+      if (totalSeconds < time8_29_59) {
         isBeforeWork = true;
         isAfterWork = false;
         workStatusText = 'ยังไม่ถึงเวลาเริ่มงาน (08:00 น.)';
         workStatusBadgeClass = 'bg-amber-500/20 text-amber-300 border-amber-500/30';
-      } else if (timeValue >= startWorkMin && timeValue <= 12 * 60) {
+      } else if (totalSeconds >= time8_29_59 && totalSeconds <= time11_59_59) {
         isBeforeWork = false;
         isAfterWork = false;
-        workStatusText = 'ช่วงเวลาทำงาน (รอบเช้า)';
+        workStatusText = 'เวลาทำงาน (รอบเช้า)';
         workStatusBadgeClass = 'bg-blue-500/20 text-blue-300 border-blue-500/30';
-      } else if (timeValue >= lunchStartMin && timeValue <= lunchEndMin) {
+      } else if (totalSeconds > time11_59_59 && totalSeconds <= time12_59_59) {
         isBeforeWork = false;
         isAfterWork = false;
-        workStatusText = 'ช่วงเวลาพักกินข้าว';
+        workStatusText = 'เวลาพักกินข้าว';
         workStatusBadgeClass = 'bg-emerald-500/20 text-emerald-300 border-emerald-500/30';
-      } else if (timeValue >= afternoonStartMin && timeValue <= endWorkMin) {
+      } else if (totalSeconds > time12_59_59 && totalSeconds <= time17_29_59) {
         isBeforeWork = false;
         isAfterWork = false;
-        workStatusText = 'ช่วงเวลาทำงาน (รอบบ่าย)';
+        workStatusText = 'เวลาทำงาน (รอบบ่าย)';
         workStatusBadgeClass = 'bg-indigo-500/20 text-indigo-300 border-indigo-500/30';
       } else {
         isBeforeWork = false;
         isAfterWork = true;
-        workStatusText = 'ช่วงเวลาเลิกงานแล้ว พักผ่อนได้!';
+        workStatusText = 'เวลาเลิกงาน';
         workStatusBadgeClass = 'bg-green-500/20 text-green-300 border-green-500/30';
       }
 

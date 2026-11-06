@@ -221,7 +221,7 @@
       <div class="grid grid-cols-4 gap-2">
         {#each [{val: days, label: 'วัน'}, {val: hours, label: 'ชั่วโมง'}, {val: minutes, label: 'นาที'}, {val: seconds, label: 'วินาที'}] as item}
           <div class="bg-neutral-900/60 border border-neutral-800/40 py-2.5 sm:py-3 px-1 rounded-2xl text-center shadow-sm">
-            <div class="text-8xl sm:text-4xl font-bold text-white tracking-tight">{item.val}</div>
+            <div class="text-2xl sm:text-4xl font-bold text-white tracking-tight">{item.val}</div>
             <div class="text-[10px] text-neutral-500 mt-2 font-medium">{item.label}</div>
           </div>
         {/each}

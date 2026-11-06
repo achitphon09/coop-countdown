@@ -99,7 +99,7 @@
       } else {
         isBeforeWork = false;
         isAfterWork = true;
-        workStatusText = 'เลิกงานแล้ว พักผ่อนได้!';
+        workStatusText = 'เลิกงานแล้ว';
         workStatusBadgeClass = 'text-rose-400 border-rose-500/30 bg-rose-500/10';
         dotColorClass = 'bg-rose-500'; 
       }

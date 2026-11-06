@@ -202,15 +202,15 @@
         {:else}
           <div class="grid grid-cols-3 gap-2 text-center">
             <div class="bg-white/[0.03] backdrop-blur-md rounded-xl py-1.5 sm:py-2 border border-white/5">
-              <span class="text-base sm:text-lg font-light text-white">{todayHoursLeft}</span>
+              <span class="text-base sm:text-lg font-bold text-white">{todayHoursLeft}</span>
               <span class="text-[10px] text-neutral-500 ml-0.5">ชม.</span>
             </div>
             <div class="bg-white/[0.03] backdrop-blur-md rounded-xl py-1.5 sm:py-2 border border-white/5">
-              <span class="text-base sm:text-lg font-light text-white">{todayMinutesLeft}</span>
+              <span class="text-base sm:text-lg font-bold text-white">{todayMinutesLeft}</span>
               <span class="text-[10px] text-neutral-500 ml-0.5">นาที</span>
             </div>
             <div class="bg-white/[0.03] backdrop-blur-md rounded-xl py-1.5 sm:py-2 border border-white/5">
-              <span class="text-base sm:text-lg font-light text-white">{todaySecondsLeft}</span>
+              <span class="text-base sm:text-lg font-bold text-white">{todaySecondsLeft}</span>
               <span class="text-[10px] text-neutral-500 ml-0.5">วินาที</span>
             </div>
           </div>
@@ -219,10 +219,10 @@
 
       <!-- กล่องนับเวลาหลัก 4 ช่อง -->
       <div class="grid grid-cols-4 gap-2">
-        {#each [{val: days, label: 'วัน'}, {val: hours, label: 'ชม.'}, {val: minutes, label: 'นาที'}, {val: seconds, label: 'วินาที'}] as item}
+        {#each [{val: days, label: 'วัน'}, {val: hours, label: 'ชั่วโมง'}, {val: minutes, label: 'นาที'}, {val: seconds, label: 'วินาที'}] as item}
           <div class="bg-neutral-900/60 border border-neutral-800/40 py-2.5 sm:py-3 px-1 rounded-2xl text-center shadow-sm">
-            <div class="text-lg sm:text-2xl font-light text-white tracking-tight">{item.val}</div>
-            <div class="text-[10px] text-neutral-500 mt-0.5 font-medium">{item.label}</div>
+            <div class="text-8xl sm:text-4xl font-bold text-white tracking-tight">{item.val}</div>
+            <div class="text-[10px] text-neutral-500 mt-2 font-medium">{item.label}</div>
           </div>
         {/each}
       </div>
